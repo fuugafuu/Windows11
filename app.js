@@ -289,9 +289,14 @@
     const area=$('settings-list'); area.replaceChildren();
     const rows=ROWS[page()];
     if(!rows) throw new Error('Missing UEFI page: '+page());
-    let index=0;
-    for(const row of rows){
-      if(row.type==='group') { area.append(el('div','item-group',row.label));continue; }
+    const all=rows.filter(r=>r.type!=='group');
+    selected=Math.max(0,Math.min(selected,all.length-1));
+    const height=area.getBoundingClientRect().height || 380;
+    const capacity=Math.max(4,Math.floor((height-20)/(Math.min(41,Math.max(25,innerHeight*(innerWidth<=700?.047:.0385))))));
+    const section=Math.floor(selected/capacity);
+    const shown=all.slice(section*capacity,(section+1)*capacity);
+    let index=section*capacity;
+    for(const row of shown){
       const id=index++;
       const disabled=entryDisabled(row);
       const b=el('button',`setting-row ${row.type==='info'?'info':''} ${row.type==='action'?'action':''} ${disabled?'disabled':''} ${id===selected?'selected':''}`);
@@ -309,18 +314,18 @@
       });
       area.append(b);
     }
-    selected=Math.max(0,Math.min(selected,activeRows().length-1));
+    if(all.length>capacity){const hint=el('div','page-hint',`${section+1}/${Math.ceil(all.length/capacity)}  •  ↑ ↓`);area.append(hint);}
     updateSelection(false);
     status(lastMessage);
   }
   function updateSelection(scroll=true) {
     const items=[...$('settings-list').querySelectorAll('.setting-row')];
     items.forEach((item,i)=>{
-      const isSelected=i===selected;
+      const isSelected=Number(item.dataset.index)===selected;
       item.classList.toggle('selected',isSelected);
       item.setAttribute('aria-selected',String(isSelected));
     });
-    if(scroll && items[selected])items[selected].scrollIntoView({block:'nearest'});
+    if(scroll){const active=items.find(item=>Number(item.dataset.index)===selected);active?.focus({preventScroll:true});}
     const current=activeRows()[selected];
     const content=$('context-content');
     content.textContent=(current && current.help) || 'Select a setting to see more information.';
@@ -328,7 +333,7 @@
   }
   function focusList(){ if(screen==='setup') $('settings-list').focus({preventScroll:true}); }
   function selectTab(offset){ const i=TABS.indexOf(tab);tab=TABS[(i+offset+TABS.length)%TABS.length];crumbs=[];selected=0;render(); }
-  function move(offset){const count=activeRows().length;if(!count)return;selected=(selected+offset+count)%count;updateSelection();}
+  function move(offset){const count=activeRows().length;if(!count)return;selected=(selected+offset+count)%count;render();}
   function goBack(){if(crumbs.length){crumbs.pop();selected=0;render();}else confirmExit();}
   function activate(row){
     if(!row || entryDisabled(row)) {status('This option is currently unavailable.');return;}
@@ -430,13 +435,16 @@
     },'Load Defaults');
   }
   function bootDevice(device){
-    let title='No Bootable Device';let message='The virtual SSD has no operating system. Windows 11 has not been implemented.';
-    if(device===DEVICES[1]) {title='USB Boot Failed';message='No virtual USB boot media is attached.';}
-    if(device===DEVICES[2]) {title='PXE Boot Failed';message='PXE-E53: No boot filename received. This is a simulated network boot; no packets were sent.';}
+    if(device===DEVICES[0]){
+      screen='boot';
+      $('firmware').classList.add('is-splash');
+      window.dispatchEvent(new CustomEvent('virtualpc:boot', {detail:{device}}));
+      return;
+    }
+    const label=device===DEVICES[1]?'No USB boot media detected':'PXE-E53: No boot filename received';
     screen='boot';$('firmware').classList.add('is-splash');
-    $('firmware-body').innerHTML=`<div class="screen-splash"><div class="splash-symbol">UEFI<span>●</span></div><h1 id="boot-error-title"></h1><div class="splash-post" id="boot-error-message"></div><div class="splash-actions"><button data-screen-action="setup">Enter UEFI Setup</button><button data-screen-action="splash">Restart Simulator</button></div><div class="splash-bottom">Virtual boot attempt only. No operating system and no physical drive are accessed.</div></div>`;
-    $('boot-error-title').textContent=title;
-    $('boot-error-message').textContent=message;
+    $('firmware-body').innerHTML='<div class="screen-splash"><div class="splash-symbol">Boot Failure</div><h1 id="boot-error-title"></h1><div class="splash-actions"><button data-screen-action="setup">Enter Setup</button><button data-screen-action="splash">Restart</button></div></div>';
+    $('boot-error-title').textContent=label;
     bindScreenButtons();
   }
   function bootAttempt(choice){
@@ -541,7 +549,7 @@
   function perform(id){
     const confirmAct=(title,msg,fn)=>confirm(title,msg,fn,'Continue');
     switch(id){
-      case 'save-exit':case 'save-reset': if(saveChanges())showSplash();break;
+      case 'save-exit':case 'save-reset': if(saveChanges())bootAttempt();break;
       case 'discard-exit':case 'discard-reset': discard();showSplash();break;
       case 'save':saveChanges();break;
       case 'discard':confirmAct('Discard Changes','Discard every unsaved virtual firmware setting?',discard);break;
@@ -587,7 +595,7 @@
     }
     if(key==='F1'){generalHelp();return;}
     if(key==='F9'){defaults();return;}
-    if(key==='F10'){if(saveChanges())showSplash();return;}
+    if(key==='F10'){if(saveChanges())bootAttempt();return;}
     if(key==='Escape'){goBack();return;}
     if(key==='ArrowLeft'){selectTab(-1);return;}
     if(key==='ArrowRight'){selectTab(1);return;}
@@ -597,6 +605,8 @@
     if(key==='+'||key==='='||key==='Add')cycleSetting(activeRows()[selected],1);
     if(key==='-'||key==='Subtract')cycleSetting(activeRows()[selected],-1);
   }
+  window.addEventListener('virtualpc:setup',()=>{document.getElementById('os-root')?.remove();document.body.classList.remove('os-active');enterSetup();});
+  window.addEventListener('virtualpc:restart',()=>{document.getElementById('os-root')?.remove();document.body.classList.remove('os-active');showSplash();});
   document.addEventListener('keydown',e=>{
     if(e.key==='Tab')return;
     const keys=['F1','F2','F9','F10','Escape','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Enter','Delete','+','=','-','Add','Subtract'];
@@ -614,5 +624,5 @@
   });
   document.addEventListener('fullscreenchange',()=>{$('btn-fullscreen').textContent=document.fullscreenElement?'⛶ Exit Fullscreen':'⛶ Fullscreen';});
   $('overlay').addEventListener('mousedown',e=>{if(e.target===$('overlay'))closeDialog();});
-  render();
+  showSplash();
 })();
