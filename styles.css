@@ -1,0 +1,91 @@
+:root { color-scheme: light; --navy:#071a9d; --navy2:#07136a; --ink:#07135d; --surface:#d7d7d9; --focus:#0b299d; --line:#8790b8; --pale:#fafafa; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { min-width: 320px; min-height: 100%; margin: 0; }
+body { background: #101729; color: #eff3ff; font-family: ui-monospace, 'Cascadia Mono', Consolas, 'Courier New', monospace; }
+button,input,select { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible,[tabindex]:focus-visible { outline: 3px solid #d8b844; outline-offset: 2px; }
+.workspace { min-height: 100dvh; max-width: 1650px; margin: 0 auto; padding: 14px 18px 20px; display:flex; flex-direction:column; gap:12px; }
+.toolbar { display:flex; align-items:center; flex-wrap:wrap; gap:9px; font-family:system-ui, sans-serif; font-size:12px; letter-spacing:.025em; }
+.toolbar-brand { font-weight:700; margin-right:auto; white-space:nowrap; }
+.power-dot {display:inline-block; width:8px;height:8px;background:#54e0ae;border-radius:50%;margin-right:7px;box-shadow:0 0 12px #54e0ae66;}
+.toolbar-separator {color:#60729e;margin:0 5px;}
+.toolbar-caption {font-size:11px;color:#a9b5d0;margin-right:9px;}
+.toolbar-button {background:#202c47;color:#f1f4ff;border:1px solid #42506f;border-radius:5px;padding:8px 12px;font-size:12px;}
+.toolbar-button:hover {background:#304169;}
+.firmware { flex:1; min-height:600px; display:flex; flex-direction:column; background:var(--surface); border:4px solid var(--navy); color:var(--ink); box-shadow:0 16px 44px #0009; overflow:hidden; }
+.firmware-title {min-height:41px;background:var(--navy);color:white;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:5px 21px;font-size:16px;letter-spacing:.02em;}
+.firmware-title strong {font-size:18px;}
+.sim-indicator {font-family:system-ui,sans-serif;font-weight:800;font-size:10px;letter-spacing:.1em;color:#081044;background:#a9bdff;padding:5px 8px;border-radius:2px;white-space:nowrap;}
+.tabs {height:43px;display:flex;align-items:stretch;gap:0;padding:0 8px;background:var(--navy);overflow-x:auto;scrollbar-width:thin;scrollbar-color:#9aa7d4 #0c218a;}
+.tabs button {flex:0 0 auto;padding:9px 18px;color:#dce3ff;background:transparent;border:0;border-radius:0;font-size:16px;white-space:nowrap;}
+.tabs button:hover {background:#2b44ad;}
+.tabs button[aria-current="page"] {background:var(--surface);color:var(--ink);font-weight:700;}
+.firmware-body {flex:1;min-height:420px;display:grid;grid-template-columns:minmax(0,2.6fr) minmax(220px,1fr);gap:8px;padding:9px 9px 7px;}
+.settings-column,.context-panel {min-width:0;border:2px solid var(--line);background:var(--surface);}
+.settings-column {display:flex;flex-direction:column;min-height:0;}
+.location-line {height:35px;flex-shrink:0;border-bottom:1px solid #99a2c2;padding:8px 17px;font-size:13px;color:#263980;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.modified-pill {color:#972a35;background:#fff2f2;border:1px solid #dfbdbd;font-weight:700;font-size:10px;padding:4px 6px;}
+.settings-list {padding:11px 10px 28px;overflow:auto;min-height:300px;flex:1;outline-offset:-3px;scrollbar-color:#8b95ba #d5d5db;}
+.item-group {font-size:14px;font-weight:bold;color:#42434e;margin:13px 10px 8px;letter-spacing:.01em;}
+.item-group:not(:first-child) {margin-top:21px;}
+.item-divider {height:1px;background:#aeb2c7;margin:10px 10px 12px;}
+.setting-row {width:100%;min-height:36px;display:grid;grid-template-columns:minmax(0,1fr) minmax(145px,.62fr) 17px;align-items:center;text-align:left;padding:6px 9px;margin:1px 0;border:1px solid transparent;background:transparent;color:var(--ink);gap:9px;font-size:14px;line-height:1.25;}
+.setting-row:hover {background:#bbc7ee;}
+.setting-row.selected {background:var(--focus);color:#fff;}
+.setting-row.selected .setting-value,.setting-row.selected .setting-chevron {color:#fff;}
+.setting-row:disabled,.setting-row.disabled {opacity:.42;cursor:not-allowed;}
+.setting-label {overflow-wrap:anywhere;}
+.setting-value {justify-self:end;color:#122f97;font-weight:bold;min-width:0;text-align:right;overflow-wrap:anywhere;}
+.setting-row.info .setting-value {color:#252749;font-weight:400;}
+.setting-row.info.selected .setting-value {color:#fff;}
+.setting-chevron {text-align:right;font-weight:bold;color:#1742aa;}
+.setting-row.action .setting-label {font-weight:700;}
+.empty-area {padding:50px 20px;text-align:center;color:#45466c;}
+.context-panel {display:flex;flex-direction:column;padding:12px 12px 15px;font-size:13px;line-height:1.5;}
+.help-heading {font-weight:bold;border-bottom:1px solid #979ebd;padding-bottom:9px;margin-bottom:11px;color:#202e89;}
+.context-content {min-height:75px;white-space:pre-wrap;overflow-wrap:anywhere;}
+.help-warning {margin-top:12px;color:#882b2c;font-weight:700;}
+.key-legend {border-top:2px solid #8894c1;margin-top:auto;padding-top:14px;display:grid;grid-template-columns:1fr;gap:5px;color:#1e2d86;}
+.key-legend b {display:inline-block;min-width:67px;color:#0b1b78;}
+.firmware-footer {min-height:35px;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 12px;background:var(--navy);color:#f8f8ff;font-size:12px;}
+#status-message {color:#e7d89a;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;min-width:0;text-align:center;}
+.touch-keys {display:flex;justify-content:center;flex-wrap:wrap;gap:6px;}
+.touch-keys button {background:#1e2a44;color:#edf1ff;border:1px solid #546789;box-shadow:0 3px 0 #0a1020;border-radius:5px;min-width:56px;min-height:45px;padding:9px;font-size:12px;font-weight:700;}
+.touch-keys button:active {transform:translateY(2px);box-shadow:0 1px 0 #0a1020;}
+.touch-keys button[data-key="F10"] {background:#174f48;border-color:#327a6c;}
+.below-note {color:#aeb9cf;font:12px/1.5 system-ui,sans-serif;text-align:center;}
+.overlay {position:fixed;inset:0;z-index:100;background:#020b29af;display:flex;align-items:center;justify-content:center;padding:16px;}
+.dialog {width:min(560px,100%);border:5px double #f0f2ff;background:#d1d3e0;color:#081869;box-shadow:0 0 0 3px #081cab,0 16px 70px #000a;}
+.dialog-title {background:#071a9d;color:white;padding:13px 17px;font-weight:700;font-size:17px;}
+.dialog-body {padding:17px 20px;white-space:pre-wrap;line-height:1.6;font-size:14px;}
+.dialog-actions {padding:5px 19px 20px;display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;}
+.dialog-actions button {border:1px solid #08259b;background:#f5f6ff;color:#091e78;padding:9px 16px;min-height:40px;font-weight:700;}
+.dialog-actions button.primary {background:#0b2d9c;color:white;}
+.dialog-body label {display:block;margin-bottom:10px;font-size:12px;font-weight:700;}
+.dialog-body input {width:100%;border:1px solid #6072a4;background:white;color:#182457;padding:10px;font-size:16px;margin:7px 0 3px;min-height:42px;}
+.dialog-hint {display:block;margin-top:7px;color:#3f4570;font-size:12px;}
+.dialog-error {display:block;color:#a4001a;font-size:12px;min-height:18px;}
+.screen-splash {background:#050b17;min-height:100%;color:#dadce9;padding:10vh 7vw 5vh;display:flex;flex-direction:column;font:16px/1.65 ui-monospace,Consolas,monospace;}
+.splash-symbol {font-size:54px;line-height:1.2;font-weight:900;letter-spacing:.08em;color:#eef0ff;}
+.splash-symbol span {color:#2dc7b4;font-size:25px;vertical-align:super;margin-left:4px;}
+.screen-splash h1 {font-size:25px;line-height:1.4;color:#f5f6ff;margin:12px 0 33px;}
+.splash-post {color:#a6b3c6;margin-bottom:35px;}
+.splash-post strong {color:#5bdf96;}
+.screen-splash p {color:#c7cee1;}
+.splash-actions {display:flex;flex-wrap:wrap;gap:10px;}
+.splash-actions button {background:#102958;border:1px solid #5773b3;color:white;padding:12px 20px;font:inherit;}
+.splash-actions button:hover {background:#24519d;}
+.splash-actions kbd {font:inherit;font-size:12px;background:#415176;padding:3px 5px;margin-left:6px;}
+.splash-bottom {margin-top:auto;color:#8291ad;font-size:12px;padding-top:40px;}
+.firmware.is-splash {background:#050b17;border-color:#060d24;}
+.firmware.is-splash .firmware-title,.firmware.is-splash .tabs,.firmware.is-splash .firmware-footer {display:none;}
+.firmware.is-splash .firmware-body {display:block;padding:0;}
+.firmware.is-splash .settings-column {display:none;}
+.firmware.is-splash .context-panel {display:none;}
+.firmware.is-splash #firmware-body {min-height:calc(100vh - 190px);}
+@media (min-width:900px) { .workspace {padding-top:21px;} .touch-keys {display:none;} .firmware {min-height:690px;} }
+@media (max-width:900px) { .toolbar-caption {display:none;} .firmware-title {font-size:12px;padding:5px 11px;} .firmware-title strong {font-size:14px;} .tabs button {font-size:13px;padding:10px 12px;} .settings-row {font-size:13px;} .firmware {min-height:560px;} .firmware-body {grid-template-columns:minmax(0,1fr) 200px;} }
+@media (max-width:650px) { .workspace {padding:7px 7px 16px;gap:9px;} .toolbar {gap:5px;} .toolbar-brand {width:100%;font-size:10px;} .toolbar-button {padding:7px 9px;font-size:11px;flex:1;} .firmware {min-height:470px;border-width:3px;} .firmware-body {display:flex;flex-direction:column;padding:5px;gap:5px;min-height:420px;} .settings-column {flex:1;min-height:360px;} .context-panel {padding:8px 10px;max-height:125px;overflow:auto;flex-shrink:0;} .help-heading {padding:0 0 4px;margin:0 0 4px;font-size:12px;} .context-content {min-height:0;font-size:11px;} .key-legend {display:none;} .settings-list {min-height:290px;padding:7px 4px 25px;} .setting-row {min-height:39px;font-size:12px;grid-template-columns:minmax(0,1fr) minmax(105px,.7fr) 11px;gap:3px;padding:7px 5px;} .item-group {font-size:12px;margin-left:4px;} .location-line {height:29px;font-size:11px;padding:5px 8px;} .firmware-title {min-height:34px;} .sim-indicator {font-size:8px;padding:3px 4px;} .tabs {height:38px;padding:0 3px;} .tabs button {padding:7px 11px;font-size:12px;} .firmware-footer {font-size:10px;min-height:29px;padding:4px 7px;} .firmware-footer span:first-child {display:none;} .touch-keys {display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;} .touch-keys button {min-width:0;min-height:44px;padding:6px;font-size:11px;} .screen-splash {padding:11vh 7vw 7vh;} .screen-splash h1 {font-size:20px;} .splash-symbol {font-size:38px;} }
+@media (max-height:650px) and (min-width:651px) { .firmware {min-height:500px;} }
