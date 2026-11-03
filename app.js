@@ -485,6 +485,7 @@
     const actions=body.querySelector('.splash-actions');
     const reset=el('button','','Reset Virtual NVRAM');reset.dataset.screenAction='reset-nvram';actions.append(reset);
     bindScreenButtons();
+    setTimeout(()=>{if(screen==='splash'&&!modalOpen)bootAttempt();},saved.values.fastBoot?1400:3800);
   }
   function bindScreenButtons(){
     $('firmware-body').querySelectorAll('[data-screen-action]').forEach(b=>b.addEventListener('click',()=>screenAction(b.dataset.screenAction)));
